@@ -8,9 +8,10 @@ const { PORT = 3000 } = process.env
 
 app.use('/users', usersRoute);
 app.use('/cards', cardsRoute);
+app.use('/cards/:id', usersRoute);
 
 if(!PORT){
-  console.log(`Porta inválida`);
+  console.log({ "message":"A solicitação não foi encontrada" });
 } else {
   app.listen(PORT, ()=>{
   console.log(`Servidor sendo executado na porta ${PORT}`)

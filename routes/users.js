@@ -12,4 +12,16 @@ router.get('/', (req,res)=>{
   })
 })
 
+router.get('/:id', (req,res)=>{
+  fsPromises.readFile(USERS_PATH, {encoding: 'utf8'}).then((users)=>{
+    const parsedUsersData = JSON.parse(users);
+    const user = parsedUsersData.find((user) => user._id === req.params.id);
+  if (!user) {
+    res.status(404).send({ message: "ID do usuário não encontrado" });
+} else {
+    res.send({ data: user });
+}
+  })
+})
+
 module.exports = router;
