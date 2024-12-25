@@ -4,7 +4,7 @@ const User = require("../models/user.js");
 module.exports.getUsers = (req, res) => {
   User.find({})
     .orFail(() => {
-      const error = new Error("Users not found");
+      const error = new Error("Users not found blebleble");
       error.statusCode = 404;
       throw error;
     })
@@ -16,7 +16,7 @@ module.exports.getUserById = (req, res) => {
   const { id } = req.params;
   User.findById(id)
     .orFail(() => {
-      const error = new Error("User not found");
+      const error = new Error("User not found jiujiujiu");
       error.statusCode = 404;
       throw error;
     })
@@ -30,6 +30,7 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
+  console.log("requisição recebida:", req.body); //consolecheck
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar }).then((newUser) => {

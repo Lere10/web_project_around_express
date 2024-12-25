@@ -6,11 +6,12 @@ const mongoose = require("mongoose");
 const app = express();
 const { PORT = 3000 } = process.env;
 
-mongoose.connect("mongodb://localhost:27017/aroundb", {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-});
+app.use(express.json());
+
+mongoose
+  .connect("mongodb://localhost:27017/aroundb")
+  .then(() => console.log("Conexão com MongoDB bem-sucedida!"))
+  .catch((err) => console.error("Erro ao conectar ao MongoDB:", err));
 
 app.get("/", (req, res) => {
   res.send(
