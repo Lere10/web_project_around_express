@@ -23,7 +23,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.params;
   const { _id } = req.user;
 
-  Card.create({ name, link })
+  Card.create({ name, link, _id })
     .orFail()
     .then((newCard) => {
       res.send({ data: newCard });
@@ -36,12 +36,22 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { _id } = req.params;
 
-  Card.findByIdAndRemove({ _id })
-    .orFail()
+  Card.findByIdAndRemove(_id)
+    .orFail(new Error("CardNotFound"))
     .then((deletedCard) => {
-      res.send(deletedCard);
+      res.send({ message: "Card deleted successfully", data: deletedCard });
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      if (err.message === "CardNotFound") {
+        return res.status(404).send({ message: "Card not found" });
+      } else if (err.name === "ValidationError") {
+        return res
+          .status(400)
+          .send({ message: "Validation error", details: err.errors });
+      } else {
+        return res
+          .status(500)
+          .send({ message: "Internal server error", error: err.message });
+      }
     });
 };
