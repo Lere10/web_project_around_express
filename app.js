@@ -1,6 +1,6 @@
 const express = require("express");
-const usersRoute = require("./routes/users");
-const cardsRoute = require("./routes/cards");
+const usersRoute = require("./routes/users.js");
+const cardsRoute = require("./routes/cards.js");
 const mongoose = require("mongoose");
 
 const app = express();
@@ -20,8 +20,17 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", usersRoute);
+// app.use("/users/:id", usersRoute);
 app.use("/cards", cardsRoute);
-app.use("/cards/:id", usersRoute);
+app.use("/cards/:id", cardsRoute);
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: "676bb7e1f06244e65436ae88",
+  };
+
+  next();
+});
 
 if (!PORT) {
   console.log({ message: "A solicitação não foi encontrada" });

@@ -9,12 +9,15 @@ module.exports.getUsers = (req, res) => {
       throw error;
     })
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      const statusCode = error.statusCode || 500;
+      res.status(statusCode).send({ message: err.message });
+    });
 };
 
 module.exports.getUserById = (req, res) => {
-  const { id } = req.params;
-  User.findById(id)
+  const { _id } = req.params;
+  User.findById(_id)
     .orFail(() => {
       const error = new Error("User not found jiujiujiu");
       error.statusCode = 404;
