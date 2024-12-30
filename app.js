@@ -20,9 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", usersRoute);
-// app.use("/users/:id", usersRoute);
 app.use("/cards", cardsRoute);
-app.use("/cards/:id", cardsRoute);
 
 app.use((req, res, next) => {
   req.user = {

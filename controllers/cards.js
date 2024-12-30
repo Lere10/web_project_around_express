@@ -34,9 +34,9 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  const { _id } = req.params;
+  const { cardId } = req.params;
 
-  Card.findByIdAndRemove(_id)
+  Card.findByIdAndRemove(cardId)
     .orFail(new Error("CardNotFound"))
     .then((deletedCard) => {
       res.send({ message: "Card deleted successfully", data: deletedCard });
@@ -55,3 +55,43 @@ module.exports.deleteCard = (req, res) => {
       }
     });
 };
+
+module.exports.likeCard = (req, res) =>
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((likedCard) => {
+      res.send({ message: "Card liked sucessfully", data: likedCard });
+    })
+    .catch((err) => {
+      if (!req.user._id) {
+        return res.status(404).send({ message: "Usuário não encontrado" });
+      } else if (!req.params.cardId) {
+        return res.status(404).send({ message: "Card não encontrado" });
+      } else {
+        return res.status(500).send(err.message);
+      }
+    });
+
+module.exports.dislikeCard = (req, res) =>
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((dislikedCard) => {
+      res.send({ message: "card disliked sucessfully", data: dislikedCard });
+    })
+    .catch((err) => {
+      if (!req.user._id) {
+        return res.status(404).send({ message: "Usuário não encontrado" });
+      } else if (!req.params.cardId) {
+        return res.status(404).send({ message: "Card não encontrado" });
+      } else {
+        return res.status(500).send(err.message);
+      }
+    });
