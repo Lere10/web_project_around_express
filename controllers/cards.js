@@ -20,15 +20,14 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   console.log("requisição de card: ", req.body);
-  const { name, link } = req.params;
+  const { name, link } = req.body;
   const { _id } = req.user;
-
-  Card.create({ name, link, _id })
-    .orFail()
+  Card.create({ name, link, owner: _id })
     .then((newCard) => {
       res.send({ data: newCard });
     })
     .catch((err) => {
+      console.error(err);
       res.status(400).send({ message: err.message });
     });
 };
@@ -36,23 +35,21 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
 
-  Card.findByIdAndRemove(cardId)
-    .orFail(new Error("CardNotFound"))
+  Card.findByIdAndDelete(cardId)
     .then((deletedCard) => {
+      if (!deletedCard) {
+        return res.status(404).send({ message: "Card not found" });
+      }
       res.send({ message: "Card deleted successfully", data: deletedCard });
     })
     .catch((err) => {
-      if (err.message === "CardNotFound") {
-        return res.status(404).send({ message: "Card not found" });
-      } else if (err.name === "ValidationError") {
-        return res
-          .status(400)
-          .send({ message: "Validation error", details: err.errors });
-      } else {
-        return res
-          .status(500)
-          .send({ message: "Internal server error", error: err.message });
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "Invalid Card ID" });
       }
+      console.error(err);
+      return res
+        .status(500)
+        .send({ message: "Internal server error", error: err.message });
     });
 };
 
