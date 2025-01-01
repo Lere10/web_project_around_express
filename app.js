@@ -21,11 +21,6 @@ app.get("/", (req, res) => {
   );
 });
 
-app.use("/users", usersRoute);
-// app.use("/users/:id", usersRoute);
-app.use("/cards", cardsRoute);
-app.use("/cards/:id", cardsRoute);
-
 app.use((req, res, next) => {
   req.user = {
     _id: "676bb7e1f06244e65436ae88",
@@ -33,6 +28,10 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use("/users", usersRoute);
+app.use("/cards", cardsRoute);
+app.use("/cards/:id", cardsRoute);
 
 if (!PORT) {
   console.log({ message: "Requisition failed" });
