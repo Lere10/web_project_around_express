@@ -1,23 +1,19 @@
 const { error } = require("console");
 const User = require("../models/user.js");
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .orFail(() => {
-      const error = new Error("Users not found blebleble");
+      const error = new Error("Users not found");
       error.statusCode = 404;
       throw error;
     })
     .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      const statusCode = error.statusCode || 500;
-      res.status(statusCode).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   const { id } = req.params;
-  console.log(req);
   User.findById({ _id: id })
     .orFail(() => {
       const error = new Error("User not found");
@@ -27,10 +23,7 @@ module.exports.getUserById = (req, res) => {
     .then((user) => {
       res.send({ data: user });
     })
-    .catch((err) => {
-      const statusCode = error.statusCode || 500;
-      res.status(statusCode).send({ message: err.message });
-    });
+    .catch(next);
 };
 
 module.exports.createUser = (req, res) => {
@@ -43,35 +36,35 @@ module.exports.createUser = (req, res) => {
   });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   const { _id } = req.user;
-  User.findByIdAndUpdate(_id, { name, about })
-    .orFail()
+  User.findByIdAndUpdate(
+    _id,
+    { name, about },
+    { new: true, runValidators: true }
+  )
+    .orFail(() => {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    })
     .then((updatedUser) => res.send({ data: updatedUser }))
-    .catch((err) => {
-      if (!_id) {
-        res.status(404).send({ message: "User not found" });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
-    });
+    .catch(next);
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const { _id } = req.user;
 
   User.findByIdAndUpdate(_id, { avatar })
-    .orFail()
+    .orFail(() => {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    })
     .then((updatedAvatar) => {
       res.send({ data: updatedAvatar });
     })
-    .catch((err) => {
-      if (!_id) {
-        return res.status(404).send({ message: "User not found" });
-      } else {
-        return res.status(500).send(err.message);
-      }
-    });
+    .catch(next);
 };

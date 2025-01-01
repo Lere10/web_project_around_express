@@ -32,8 +32,21 @@ app.use((req, res, next) => {
 app.use("/users", usersRoute);
 app.use("/cards", cardsRoute);
 
+//middlewares de erros gerais
+app.use((req, res, next) => {
+  const error = new Error("Rota não encontrada");
+  error.statusCode = 404;
+  next(error);
+});
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).send({ message: err.message });
+});
+//
+
 if (!PORT) {
-  console.log({ message: "Requisition failed" });
+  console.error("Erro: Porta não especificada no ambiente");
+  process.exit(1);
 } else {
   app.listen(PORT, () => {
     console.log(`Servidor sendo executado na porta ${PORT}`);
