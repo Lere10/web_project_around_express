@@ -31,7 +31,6 @@ app.use((req, res, next) => {
 
 app.use("/users", usersRoute);
 app.use("/cards", cardsRoute);
-app.use("/cards/:id", cardsRoute);
 
 if (!PORT) {
   console.log({ message: "Requisition failed" });
