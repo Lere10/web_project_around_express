@@ -4,7 +4,7 @@ const Card = require("../models/card.js");
 module.exports.getCards = (req, res) => {
   Card.find({})
     .orFail(() => {
-      const error = new Error("Cards not found uwu");
+      const error = new Error("Cards not found");
       error.statusCode = 404;
       throw error;
     })
@@ -65,9 +65,9 @@ module.exports.likeCard = (req, res) =>
     })
     .catch((err) => {
       if (!req.user._id) {
-        return res.status(404).send({ message: "Usuário não encontrado" });
+        return res.status(404).send({ message: "User not found" });
       } else if (!req.params.cardId) {
-        return res.status(404).send({ message: "Card não encontrado" });
+        return res.status(404).send({ message: "Card not found" });
       } else {
         return res.status(500).send(err.message);
       }
@@ -85,9 +85,9 @@ module.exports.dislikeCard = (req, res) =>
     })
     .catch((err) => {
       if (!req.user._id) {
-        return res.status(404).send({ message: "Usuário não encontrado" });
+        return res.status(404).send({ message: "User not found" });
       } else if (!req.params.cardId) {
-        return res.status(404).send({ message: "Card não encontrado" });
+        return res.status(404).send({ message: "Card not found" });
       } else {
         return res.status(500).send(err.message);
       }

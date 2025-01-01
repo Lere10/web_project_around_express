@@ -34,7 +34,6 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  console.log("requisição recebida:", req.body);
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar }).then((newUser) => {
@@ -45,7 +44,6 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  console.log("requisição de atualização: ", req.body);
   const { name, about } = req.body;
   const { _id } = req.user;
   User.findByIdAndUpdate(_id, { name, about })
@@ -53,7 +51,7 @@ module.exports.updateUser = (req, res) => {
     .then((updatedUser) => res.send({ data: updatedUser }))
     .catch((err) => {
       if (!_id) {
-        res.status(404).send({ message: "Usuário não encontrado-" });
+        res.status(404).send({ message: "User not found" });
       } else {
         res.status(500).send({ message: err.message });
       }
@@ -61,7 +59,6 @@ module.exports.updateUser = (req, res) => {
 };
 
 module.exports.updateAvatar = (req, res) => {
-  console.log("atualização de avatar:", req.body);
   const { avatar } = req.body;
   const { _id } = req.user;
 
@@ -72,7 +69,7 @@ module.exports.updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (!_id) {
-        return res.status(404).send({ message: "Usuário não encontrado" });
+        return res.status(404).send({ message: "User not found" });
       } else {
         return res.status(500).send(err.message);
       }
