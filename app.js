@@ -13,6 +13,14 @@ mongoose
   .then(() => console.log("Conexão com MongoDB bem-sucedida!"))
   .catch((err) => console.error("Erro ao conectar ao MongoDB:", err));
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: "676bb7e1f06244e65436ae88",
+  };
+
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send(
     "users na rota /users -- users por id através da rota /users/id -- cards na rota /cards"
@@ -21,14 +29,6 @@ app.get("/", (req, res) => {
 
 app.use("/users", usersRoute);
 app.use("/cards", cardsRoute);
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: "676bb7e1f06244e65436ae88",
-  };
-
-  next();
-});
 
 if (!PORT) {
   console.log({ message: "A solicitação não foi encontrada" });

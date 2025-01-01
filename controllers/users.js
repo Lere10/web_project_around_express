@@ -48,13 +48,12 @@ module.exports.updateUser = (req, res) => {
   console.log("requisição de atualização: ", req.body);
   const { name, about } = req.body;
   const { _id } = req.user;
-
   User.findByIdAndUpdate(_id, { name, about })
     .orFail()
     .then((updatedUser) => res.send({ data: updatedUser }))
     .catch((err) => {
       if (!_id) {
-        res.status(404).send({ message: "Usuário não encontrado" });
+        res.status(404).send({ message: "Usuário não encontrado-" });
       } else {
         res.status(500).send({ message: err.message });
       }
